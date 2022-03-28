@@ -7,5 +7,4 @@
     - ['/srv/git/saltbox/adv_settings.yml', '/srv/git/saltbox/defaults/adv_settings.yml.default']
   roles:
     - { role: pre_tasks }
-    - { role: myrole, tags: ['myrole'] }
-    - { role: helloworld, tags: ['helloworld'] }
+    - { role: home-assistant, tags: ['home-assistant'] }

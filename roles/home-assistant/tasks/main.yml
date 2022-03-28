@@ -1,0 +1,47 @@
+---
+- name: Remove existing Docker container
+  docker_container:
+    name: "home-assistant"
+    state: absent
+    container_default_behavior: compatibility
+    tls_hostname: localhost
+
+- name: "Create Home-assistant directories"
+  file: "path={{ item }} state=directory mode=0775 owner={{ user.name }} group={{ user.name }}"
+  with_items:
+    - "/opt/home-assistant"
+
+- name: Create and start container
+  docker_container:
+    name: "home-assistant"
+    image: "homeassistant/home-assistant"
+    pull: true
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/opt/home-assistant:/config"
+    devices: 
+      - "/dev/ttyACM0"
+    networks:
+      - name: saltbox
+        aliases:
+          - home-assistant
+    labels:
+      com.github.saltbox.saltbox_managed: "true"
+      traefik.enable: "true"
+      traefik.http.routers.home-assistant.entrypoints: "websecure"
+      traefik.http.routers.home-assistant.middlewares: "secureHeaders@file"
+      traefik.http.routers.home-assistant.rule: "Host(`home-assistant.janes.stream`)"
+      traefik.http.routers.home-assistant.service: "home-assistant"
+      traefik.http.routers.home-assistant.tls.certresolver: "cfdns"
+      traefik.http.routers.home-assistant.tls.options: "securetls@file"
+      traefik.http.services.home-assistant.loadbalancer.server.port: "8123"
+    networks_cli_compatible: true
+    network_mode: "{{ docker_networks_name_common }}"
+    container_default_behavior: compatibility
+    purge_networks: true
+    restart_policy: unless-stopped
+    state: started
+
+- name: Debug Test
+  debug:
+    msg: "Test var is {{ some_var }}"
