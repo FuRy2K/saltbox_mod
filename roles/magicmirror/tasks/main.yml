@@ -1,0 +1,48 @@
+---
+- name: Remove existing Docker container
+  docker_container:
+    name: "magicmirror"
+    state: absent
+
+- name: Create magicmirror directories
+  file: "path={{ item }} state=directory mode=0775 owner={{ user.name }} group={{ user.name }}"
+  with_items:
+    - /opt/magicmirror
+
+- name: Create and start container
+  docker_container:
+    name: "magicmirror"
+    image: "bastilimbach/docker-magicmirror"
+    pull: true
+    volumes:
+      - "/opt/magicmirror/config:/opt/magic_mirror/config"
+      - "/opt/magicmirror/modules:/opt/magic_mirror/modules"
+      - "/opt/magicmirror/css/custom.css:/opt/magic_mirror/css/custom.css"
+    env:
+      PUID: "{{ uid }}"
+      PGID: "{{ gid }}"
+      TZ: "America/New_York"
+    networks:
+      - name: saltbox
+        aliases:
+          - magicmirror
+    labels:
+      com.github.saltbox.saltbox_managed: "true"
+      traefik.enable: "true"
+      traefik.http.routers.magicmirror.entrypoints: "websecure"
+      traefik.http.routers.magicmirror.middlewares: "secureHeaders@file"
+      traefik.http.routers.magicmirror.rule: "Host(`magicmirror.janes.stream`)"
+      traefik.http.routers.magicmirror.service: "magicmirror"
+      traefik.http.routers.magicmirror.tls.certresolver: "cfdns"
+      traefik.http.routers.magicmirror.tls.options: "securetls@file"
+      traefik.http.services.magicmirror.loadbalancer.server.port: "8080"
+    networks_cli_compatible: true
+    network_mode: "{{ docker_networks_name_common }}"
+    container_default_behavior: compatibility
+    purge_networks: true
+    restart_policy: unless-stopped
+    state: started
+
+- name: Debug Test
+  debug:
+    msg: "Test var is {{ some_var }}"
