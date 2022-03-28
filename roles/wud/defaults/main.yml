@@ -1,0 +1,147 @@
+##########################################################################
+# Title:            Sandbox: WUD                                         #
+# Author(s):        FuRy2K                                               #
+# URL:              https://github.com/saltyorg/Saltbox_mod              #
+# --                                                                     #
+##########################################################################
+#                   GNU General Public License v3.0                      #
+##########################################################################
+---
+################################
+# Basics
+################################
+
+wud_name: wud
+
+################################
+# Paths
+################################
+
+wud_paths_folder: "{{ wud_name }}"
+wud_paths_location: "{{ server_appdata_path }}/{{ wud_paths_folder }}"
+wud_paths_folders_list:
+  - "{{ wud_paths_location }}"
+
+################################
+# Web
+################################
+
+wud_web_subdomain: "{{ wud_name }}"
+wud_web_domain: "{{ user.domain }}"
+wud_web_port: "3000"
+wud_web_url: "{{ 'https://' + wud_web_subdomain + '.' + wud_web_domain
+                        if (reverse_proxy_is_enabled)
+                        else 'http://localhost:' + wud_web_port }}"
+
+################################
+# DNS
+################################
+
+wud_dns_record: "{{ wud_web_subdomain }}"
+wud_dns_zone: "{{ wud_web_domain }}"
+wud_dns_proxy: "{{ dns.proxied }}"
+
+################################
+# Traefik
+################################
+
+wud_traefik_sso_middleware: "{{ traefik_default_sso_middleware }}" #Remove this line if you don't need authelia authentication
+wud_traefik_middleware: "{{ traefik_default_middleware + ',' + wud_traefik_sso_middleware
+                              if (wud_traefik_sso_middleware | length > 0)
+                              else traefik_default_middleware }}"
+wud_traefik_certresolver: "{{ traefik_default_certresolver }}"
+wud_traefik_enabled: true
+
+################################
+# Docker
+################################
+
+# Container
+wud_docker_container: "{{ wud_name }}"
+
+# Image
+wud_docker_image_pull: true
+wud_docker_image_tag: "latest"
+wud_docker_image: "fmartinou/whats-up-docker:{{ wud_docker_image_tag }}"
+
+# Ports
+wud_docker_ports_defaults:
+  - "{{ wud_web_port }}"
+wud_docker_ports_custom: []
+wud_docker_ports: "{{ wud_docker_ports_defaults
+                                + wud_docker_ports_custom
+                             if (not reverse_proxy_is_enabled)
+                             else [] + wud_docker_ports_custom }}"
+
+# Envs
+wud_docker_envs_default:
+  PUID: "{{ uid }}"
+  PGID: "{{ gid }}"
+  TZ: "{{ tz }}"
+wud_docker_envs_custom: {}
+wud_docker_envs: "{{ wud_docker_envs_default
+                               | combine(wud_docker_envs_custom) }}"
+
+# Commands
+wud_docker_commands_default: []
+wud_docker_commands_custom: []
+wud_docker_commands: "{{ wud_docker_commands_default
+                                   + wud_docker_commands_custom }}"
+
+# Volumes
+wud_docker_volumes_default:
+  - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  - "{{ wud_paths_location }}:/store"
+wud_docker_volumes_custom: []
+wud_docker_volumes: "{{ wud_docker_volumes_default
+                                  + wud_docker_volumes_custom
+                                  + docker_volumes_downloads_common }}"
+
+# Devices
+wud_docker_devices_default: []
+wud_docker_devices_custom: []
+wud_docker_devices: "{{ wud_docker_devices_default
+                                  + wud_docker_devices_custom }}"
+
+# Hosts
+wud_docker_hosts_default: []
+wud_docker_hosts_custom: []
+wud_docker_hosts: "{{ docker_hosts_common
+                                | combine(wud_docker_hosts_default)
+                                | combine(wud_docker_hosts_custom) }}"
+
+# Labels
+wud_docker_labels_default: {}
+wud_docker_labels_custom: {}
+wud_docker_labels: "{{ docker_labels_common
+                                 | combine(wud_docker_labels_default)
+                                 | combine(wud_docker_labels_custom) }}"
+
+# Hostname
+wud_docker_hostname: "{{ wud_name }}"
+
+# Networks
+wud_docker_networks_alias: "{{ wud_name }}"
+wud_docker_networks_default: []
+wud_docker_networks_custom: []
+wud_docker_networks: "{{ docker_networks_common
+                                   + wud_docker_networks_default
+                                   + wud_docker_networks_custom }}"
+
+# Capabilities
+wud_docker_capabilities_default: []
+wud_docker_capabilities_custom: []
+wud_docker_capabilities: "{{ wud_docker_capabilities_default
+                                       + wud_docker_capabilities_custom }}"
+
+# Security Opts
+wud_docker_security_opts_default: []
+wud_docker_security_opts_custom: []
+wud_docker_security_opts: "{{ wud_docker_security_opts_default
+                                        + wud_docker_security_opts_custom }}"
+
+# Restart Policy
+wud_docker_restart_policy: unless-stopped
+
+# State
+wud_docker_state: started

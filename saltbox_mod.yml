@@ -9,3 +9,4 @@
     - { role: pre_tasks }
     - { role: home-assistant, tags: ['home-assistant'] }
     - { role: magicmirror, tags: ['magicmirror'] }
+    - { role: wud, tags: ['wud'] }
