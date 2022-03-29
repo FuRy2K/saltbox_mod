@@ -26,7 +26,8 @@ apcupsd_docker_image_tag: "latest"
 apcupsd_docker_image: "fopina/apcupsd:{{ apcupsd_docker_image_tag }}"
 
 # Ports
-apcupsd_docker_ports_defaults: []
+apcupsd_docker_ports_defaults: 
+  - 127.0.0.1:3551:3551
 apcupsd_docker_ports_custom: []
 apcupsd_docker_ports: "{{ apcupsd_docker_ports_defaults
                            + apcupsd_docker_ports_custom }}"
