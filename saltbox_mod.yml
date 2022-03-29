@@ -7,6 +7,7 @@
     - ['/srv/git/saltbox/adv_settings.yml', '/srv/git/saltbox/defaults/adv_settings.yml.default']
   roles:
     - { role: pre_tasks }
+    - { role: apcupsd, tags: ['apcupsd'] }
     - { role: home-assistant, tags: ['home-assistant'] }
     - { role: magicmirror, tags: ['magicmirror'] }
     - { role: wud, tags: ['wud'] }

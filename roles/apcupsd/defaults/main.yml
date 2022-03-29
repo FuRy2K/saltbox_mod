@@ -1,0 +1,102 @@
+##########################################################################
+# Title:            Sandbox: apcupsd                                     #
+# Author(s):        FuRy2K                                               #
+# URL:              https://github.com/saltyorg/Saltbox_mod              #
+# --                                                                     #
+##########################################################################
+#                   GNU General Public License v3.0                      #
+##########################################################################
+---
+################################
+# Basics
+################################
+
+apcupsd_name: apcupsd
+
+################################
+# Docker
+################################
+
+# Container
+apcupsd_docker_container: "{{ apcupsd_name }}"
+
+# Image
+apcupsd_docker_image_pull: true
+apcupsd_docker_image_tag: "latest"
+apcupsd_docker_image: "fopina/apcupsd:{{ apcupsd_docker_image_tag }}"
+
+# Ports
+apcupsd_docker_ports_defaults: []
+apcupsd_docker_ports_custom: []
+apcupsd_docker_ports: "{{ apcupsd_docker_ports_defaults
+                           + apcupsd_docker_ports_custom }}"
+
+# Envs
+apcupsd_docker_envs_default:
+  apcupsd_CONTAINER_LABEL: "all"
+apcupsd_docker_envs_custom: {}
+apcupsd_docker_envs: "{{ apcupsd_docker_envs_default
+                          | combine(apcupsd_docker_envs_custom) }}"
+
+# Commands
+apcupsd_docker_commands_default: []
+apcupsd_docker_commands_custom: []
+apcupsd_docker_commands: "{{ apcupsd_docker_commands_default
+                              + apcupsd_docker_commands_custom }}"
+
+# Volumes
+apcupsd_docker_volumes_default:
+  - "/etc/localtime:/etc/localtime:ro"
+apcupsd_docker_volumes_custom: []
+apcupsd_docker_volumes: "{{ apcupsd_docker_volumes_default
+                             + apcupsd_docker_volumes_custom }}"
+
+# Devices
+apcupsd_docker_devices_default:
+  - "/dev/usb/hiddev0"
+apcupsd_docker_devices_custom: []
+apcupsd_docker_devices: "{{ apcupsd_docker_devices_default
+                             + apcupsd_docker_devices_custom }}"
+
+# Hosts
+apcupsd_docker_hosts_default: []
+apcupsd_docker_hosts_custom: []
+apcupsd_docker_hosts: "{{ docker_hosts_common
+                           | combine(apcupsd_docker_hosts_default)
+                           | combine(apcupsd_docker_hosts_custom) }}"
+
+# Labels
+apcupsd_docker_labels_default: {}
+apcupsd_docker_labels_custom: {}
+apcupsd_docker_labels: "{{ docker_labels_common
+                            | combine(apcupsd_docker_labels_default)
+                            | combine(apcupsd_docker_labels_custom) }}"
+
+# Hostname
+apcupsd_docker_hostname: "{{ apcupsd_name }}"
+
+# Networks
+apcupsd_docker_networks_alias: "{{ apcupsd_name }}"
+apcupsd_docker_networks_default: []
+apcupsd_docker_networks_custom: []
+apcupsd_docker_networks: "{{ docker_networks_common
+                              + apcupsd_docker_networks_default
+                              + apcupsd_docker_networks_custom }}"
+
+# Capabilities
+apcupsd_docker_capabilities_default: []
+apcupsd_docker_capabilities_custom: []
+apcupsd_docker_capabilities: "{{ apcupsd_docker_capabilities_default
+                                  + apcupsd_docker_capabilities_custom }}"
+
+# Security Opts
+apcupsd_docker_security_opts_default: []
+apcupsd_docker_security_opts_custom: []
+apcupsd_docker_security_opts: "{{ apcupsd_docker_security_opts_default
+                                   + apcupsd_docker_security_opts_custom }}"
+
+# Restart Policy
+apcupsd_docker_restart_policy: unless-stopped
+
+# State
+apcupsd_docker_state: started
