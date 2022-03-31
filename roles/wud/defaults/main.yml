@@ -78,6 +78,8 @@ wud_docker_envs_default:
   PUID: "{{ uid }}"
   PGID: "{{ gid }}"
   TZ: "{{ tz }}"
+  WUD_REGISTRY_CUSTOM_URL: "https://cr.hotio.dev"
+  WUD_WATCHER_LOCAL_CRON: "0 */6 * * *"
 wud_docker_envs_custom: {}
 wud_docker_envs: "{{ wud_docker_envs_default
                                | combine(wud_docker_envs_custom) }}"
