@@ -14,13 +14,13 @@
 - name: Create and start container
   docker_container:
     name: "home-assistant"
-    image: "homeassistant/home-assistant"
+    image: "homeassistant/home-assistant:latest"
     pull: true
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/opt/home-assistant:/config"
-    devices: 
-      - "/dev/ttyACM0"
+#    devices: 
+#      - "/dev/ttyACM0"
     networks:
       - name: saltbox
         aliases:
