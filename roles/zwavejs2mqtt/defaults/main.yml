@@ -1,0 +1,147 @@
+##########################################################################
+# Title:            Sandbox: zwavejs2mqtt                                #
+# Author(s):        FuRy2K                                              #
+# URL:              https://github.com/saltyorg/Saltbox_mod              #
+# --                                                                     #
+##########################################################################
+#                   GNU General Public License v3.0                      #
+##########################################################################
+---
+################################
+# Basics
+################################
+
+zwavejs2mqtt_name: zwavejs2mqtt
+
+################################
+# Paths
+################################
+
+zwavejs2mqtt_paths_folder: "{{ zwavejs2mqtt_name }}"
+zwavejs2mqtt_paths_location: "{{ server_appdata_path }}/{{ zwavejs2mqtt_paths_folder }}"
+zwavejs2mqtt_paths_folders_list:
+  - "{{ zwavejs2mqtt_paths_location }}"
+
+################################
+# Web
+################################
+
+zwavejs2mqtt_web_subdomain: "{{ zwavejs2mqtt_name }}"
+zwavejs2mqtt_web_domain: "{{ user.domain }}"
+zwavejs2mqtt_web_port: "8091"
+zwavejs2mqtt_web_url: "{{ 'https://' + zwavejs2mqtt_web_subdomain + '.' + zwavejs2mqtt_web_domain
+                        if (reverse_proxy_is_enabled)
+                        else 'http://localhost:' + zwavejs2mqtt_web_port }}"
+
+################################
+# DNS
+################################
+
+zwavejs2mqtt_dns_record: "{{ zwavejs2mqtt_web_subdomain }}"
+zwavejs2mqtt_dns_zone: "{{ zwavejs2mqtt_web_domain }}"
+zwavejs2mqtt_dns_proxy: "{{ dns.proxied }}"
+
+################################
+# Traefik
+################################
+
+zwavejs2mqtt_traefik_sso_middleware: "{{ traefik_default_sso_middleware }}" #Remove this line if you don't need authelia authentication
+zwavejs2mqtt_traefik_middleware: "{{ traefik_default_middleware + ',' + zwavejs2mqtt_traefik_sso_middleware
+                              if (zwavejs2mqtt_traefik_sso_middleware | length > 0)
+                              else traefik_default_middleware }}"
+zwavejs2mqtt_traefik_certresolver: "{{ traefik_default_certresolver }}"
+zwavejs2mqtt_traefik_enabled: true
+
+################################
+# Docker
+################################
+
+# Container
+zwavejs2mqtt_docker_container: "{{ zwavejs2mqtt_name }}"
+
+# Image
+zwavejs2mqtt_docker_image_pull: true
+zwavejs2mqtt_docker_image_tag: "latest"
+zwavejs2mqtt_docker_image: "zwavejs/zwavejs2mqtt:{{ zwavejs2mqtt_docker_image_tag }}"
+
+# Ports
+zwavejs2mqtt_docker_ports_defaults:
+  - "{{ zwavejs2mqtt_web_port }}"
+  - "3000:3000/tcp"
+zwavejs2mqtt_docker_ports_custom: []
+zwavejs2mqtt_docker_ports: "{{ zwavejs2mqtt_docker_ports_defaults
+                                + zwavejs2mqtt_docker_ports_custom
+                             if (not reverse_proxy_is_enabled)
+                             else [] + zwavejs2mqtt_docker_ports_custom }}"
+
+# Envs
+zwavejs2mqtt_docker_envs_default:
+  PUID: "{{ uid }}"
+  PGID: "{{ gid }}"
+  TZ: "{{ tz }}"
+zwavejs2mqtt_docker_envs_custom: {}
+zwavejs2mqtt_docker_envs: "{{ zwavejs2mqtt_docker_envs_default
+                               | combine(zwavejs2mqtt_docker_envs_custom) }}"
+
+# Commands
+zwavejs2mqtt_docker_commands_default: []
+zwavejs2mqtt_docker_commands_custom: []
+zwavejs2mqtt_docker_commands: "{{ zwavejs2mqtt_docker_commands_default
+                                   + zwavejs2mqtt_docker_commands_custom }}"
+
+# Volumes
+zwavejs2mqtt_docker_volumes_default:
+  - "{{ zwavejs2mqtt_paths_location }}/store:/usr/src/app/store"
+zwavejs2mqtt_docker_volumes_custom: []
+zwavejs2mqtt_docker_volumes: "{{ zwavejs2mqtt_docker_volumes_default
+                                  + zwavejs2mqtt_docker_volumes_custom }}"
+
+# Devices
+zwavejs2mqtt_docker_devices_default:
+  - "/dev/serial/by-id/usb-0658_0200-if00:/dev/zwave"
+zwavejs2mqtt_docker_devices_custom: []
+zwavejs2mqtt_docker_devices: "{{ zwavejs2mqtt_docker_devices_default
+                                  + zwavejs2mqtt_docker_devices_custom }}"
+
+# Hosts
+zwavejs2mqtt_docker_hosts_default: []
+zwavejs2mqtt_docker_hosts_custom: []
+zwavejs2mqtt_docker_hosts: "{{ docker_hosts_common
+                                | combine(zwavejs2mqtt_docker_hosts_default)
+                                | combine(zwavejs2mqtt_docker_hosts_custom) }}"
+
+# Labels
+zwavejs2mqtt_docker_labels_default: {}
+zwavejs2mqtt_docker_labels_custom: {}
+zwavejs2mqtt_docker_labels: "{{ docker_labels_common
+                                 | combine(zwavejs2mqtt_docker_labels_default)
+                                 | combine(zwavejs2mqtt_docker_labels_custom) }}"
+
+# Hostname
+zwavejs2mqtt_docker_hostname: "{{ zwavejs2mqtt_name }}"
+
+# Networks
+zwavejs2mqtt_docker_networks_alias: "{{ zwavejs2mqtt_name }}"
+zwavejs2mqtt_docker_networks_default: []
+zwavejs2mqtt_docker_networks_custom: []
+zwavejs2mqtt_docker_networks: "{{ docker_networks_common
+                                   + zwavejs2mqtt_docker_networks_default
+                                   + zwavejs2mqtt_docker_networks_custom }}"
+
+# Capabilities
+zwavejs2mqtt_docker_capabilities_default: []
+zwavejs2mqtt_docker_capabilities_custom: []
+zwavejs2mqtt_docker_capabilities: "{{ zwavejs2mqtt_docker_capabilities_default
+                                       + zwavejs2mqtt_docker_capabilities_custom }}"
+
+# Security Opts
+zwavejs2mqtt_docker_security_opts_default: []
+zwavejs2mqtt_docker_security_opts_custom: []
+zwavejs2mqtt_docker_security_opts: "{{ zwavejs2mqtt_docker_security_opts_default
+                                        + zwavejs2mqtt_docker_security_opts_custom }}"
+
+# Restart Policy
+zwavejs2mqtt_docker_restart_policy: unless-stopped
+
+# State
+zwavejs2mqtt_docker_state: started

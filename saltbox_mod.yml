@@ -11,3 +11,4 @@
     - { role: home-assistant, tags: ['home-assistant'] }
     - { role: magicmirror, tags: ['magicmirror'] }
     - { role: wud, tags: ['wud'] }
+    - { role: zwavejs2mqtt, tags: ['zwavejs2mqtt']}
