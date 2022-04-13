@@ -96,8 +96,7 @@ wud_docker_volumes_default:
   - "{{ wud_paths_location }}:/store"
 wud_docker_volumes_custom: []
 wud_docker_volumes: "{{ wud_docker_volumes_default
-                                  + wud_docker_volumes_custom
-                                  + docker_volumes_downloads_common }}"
+                                  + wud_docker_volumes_custom }}"
 
 # Devices
 wud_docker_devices_default: []
